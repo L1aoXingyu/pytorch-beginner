@@ -1,2 +1,2 @@
 # pytorch-beginner
-toy code fot pytorch beginner
+toy code for pytorch beginner
