@@ -63,7 +63,10 @@ for epoch in range(num_epoches):
         img, label = data
         b, c, h, w = img.size()
         assert c == 1, 'channel must be 1'
-        img = img.view(b, w, h)
+        img = img.squeeze(1)
+        # img = img.view(b*h, w)
+        # img = torch.transpose(img, 1, 0)
+        # img = img.contiguous().view(w, b, -1)
         if use_gpu:
             img = Variable(img).cuda()
             label = Variable(label).cuda()
@@ -97,7 +100,10 @@ for epoch in range(num_epoches):
         img, label = data
         b, c, h, w = img.size()
         assert c == 1, 'channel must be 1'
-        img = img.view(b, w, h)
+        img = img.squeeze(1)
+        # img = img.view(b*h, w)
+        # img = torch.transpose(img, 1, 0)
+        # img = img.contiguous().view(w, b, h)
         if use_gpu:
             img = Variable(img, volatile=True).cuda()
             label = Variable(label, volatile=True).cuda()
