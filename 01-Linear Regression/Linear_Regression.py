@@ -14,6 +14,7 @@ y_train = np.array([[1.7], [2.76], [2.09], [3.19], [1.694], [1.573],
                     [3.366], [2.596], [2.53], [1.221], [2.827],
                     [3.465], [1.65], [2.904], [1.3]], dtype=np.float32)
 
+
 x_train = torch.from_numpy(x_train)
 
 y_train = torch.from_numpy(y_train)
@@ -50,8 +51,8 @@ for epoch in range(num_epochs):
     optimizer.step()
 
     if (epoch+1) % 20 == 0:
-        print('Epoch[{}/{}], loss: {:.6f}'.format(epoch+1, num_epochs,
-                                                  loss.data[0]))
+        print('Epoch[{}/{}], loss: {:.6f}'
+              .format(epoch+1, num_epochs, loss.data[0]))
 
 model.eval()
 predict = model(Variable(x_train))

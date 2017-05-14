@@ -31,9 +31,11 @@ class Cnn(nn.Module):
         super(Cnn, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(in_dim, 6, 3, stride=1, padding=1),
+            nn.ReLU(True),
             nn.MaxPool2d(2, 2),
             nn.Conv2d(6, 16, 5, stride=1, padding=0),
-            nn.MaxPool2d(2, 2)
+            nn.ReLU(True),
+            nn.MaxPool2d(2, 2),
         )
 
         self.fc = nn.Sequential(
