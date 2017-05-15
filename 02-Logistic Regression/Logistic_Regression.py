@@ -33,7 +33,7 @@ class Logstic_Regression(nn.Module):
 
     def forward(self, x):
         out = self.logstic(x)
-        out = F.sigmoid(out)
+        out = F.softmax(out)
         return out
 
 
@@ -57,6 +57,9 @@ for epoch in range(num_epoches):
         if use_gpu:
             img = Variable(img).cuda()
             label = Variable(label).cuda()
+        else:
+            img = Variable(img)
+            label = Variable(label)
         # 向前传播
         out = model(img)
         loss = criterion(out, label)
@@ -90,7 +93,7 @@ for epoch in range(num_epoches):
             img = Variable(img, volatile=True).cuda()
             label = Variable(label, volatile=True).cuda()
         else:
-            img = Variabel(img, volatile=True)
+            img = Variable(img, volatile=True)
             label = Variable(label, volatile=True)
         out = model(img)
         loss = criterion(out, label)
