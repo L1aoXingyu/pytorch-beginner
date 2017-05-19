@@ -10,7 +10,7 @@ from torchvision import datasets
 
 batch_size = 32
 learning_rate = 1e-2
-num_epoches = 20
+num_epoches = 50
 
 # 下载训练集 MNIST 手写数字训练集
 train_dataset = datasets.MNIST(root='./data', train=True,
@@ -36,7 +36,6 @@ class Neuralnetwork(nn.Module):
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
-        x = F.softmax(x)
         return x
 
 

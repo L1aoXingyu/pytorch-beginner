@@ -11,7 +11,7 @@ from torchvision import datasets
 # 定义超参数
 batch_size = 32
 learning_rate = 1e-3
-num_epoches = 20
+num_epoches = 100
 
 # 下载训练集 MNIST 手写数字训练集
 train_dataset = datasets.MNIST(root='./data', train=True,
@@ -33,7 +33,6 @@ class Logstic_Regression(nn.Module):
 
     def forward(self, x):
         out = self.logstic(x)
-        out = F.softmax(out)
         return out
 
 
