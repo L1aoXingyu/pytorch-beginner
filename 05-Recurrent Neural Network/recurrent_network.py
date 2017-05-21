@@ -9,7 +9,7 @@ from torchvision import datasets
 
 # 定义超参数
 batch_size = 100
-learning_rate = 1e-2
+learning_rate = 1e-3
 num_epoches = 20
 
 # 下载训练集 MNIST 手写数字训练集
