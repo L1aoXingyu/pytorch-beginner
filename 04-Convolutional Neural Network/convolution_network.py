@@ -9,7 +9,7 @@ from torchvision import transforms
 from torchvision import datasets
 
 # 定义超参数
-batch_size = 32
+batch_size = 128
 learning_rate = 1e-3
 num_epoches = 20
 
@@ -30,18 +30,18 @@ class Cnn(nn.Module):
     def __init__(self, in_dim, n_class):
         super(Cnn, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv2d(in_dim, 6, 3, stride=1, padding=1),
+            nn.Conv2d(in_dim, 20, 5, stride=1, padding=0),
             nn.ReLU(True),
             nn.MaxPool2d(2, 2),
-            nn.Conv2d(6, 16, 5, stride=1, padding=0),
+            nn.Conv2d(20, 50, 5, stride=1, padding=0),
             nn.ReLU(True),
             nn.MaxPool2d(2, 2),
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(400, 120),
-            nn.Linear(120, 84),
-            nn.Linear(84, n_class)
+            nn.Linear(800, 500),
+            nn.ReLU(True),
+            nn.Linear(500, n_class)
         )
 
     def forward(self, x):
