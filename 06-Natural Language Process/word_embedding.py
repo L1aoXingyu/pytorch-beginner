@@ -26,7 +26,7 @@ trigram = [((test_sentence[i], test_sentence[i+1]), test_sentence[i+2])
 
 vocb = set(test_sentence)
 word_to_idx = {word: i for i, word in enumerate(vocb)}
-
+idx_to_word = {word_to_idx[word]: word for word in word_to_idx}
 
 class NgramModel(nn.Module):
     def __init__(self, vocb_size, context_size, n_dim):
@@ -39,19 +39,19 @@ class NgramModel(nn.Module):
     def forward(self, x):
         emb = self.embedding(x)
         emb = emb.view(1, -1)
-        emb = F.relu(emb)
         out = self.linear1(emb)
+        out = F.relu(out)
         out = self.linear2(out)
         log_prob = F.log_softmax(out)
         return log_prob
 
 
 ngrammodel = NgramModel(len(word_to_idx), CONTEXT_SIZE, 100)
-criterion = nn.CrossEntropyLoss()
+criterion = nn.NLLLoss()
 optimizer = optim.SGD(ngrammodel.parameters(), lr=1e-3)
 
 for epoch in range(100):
-    print('epocp: {}'.format(epoch+1))
+    print('epoch: {}'.format(epoch+1))
     print('*'*10)
     running_loss = 0
     for data in trigram:
@@ -67,3 +67,10 @@ for epoch in range(100):
         loss.backward()
         optimizer.step()
     print('Loss: {:.6f}'.format(running_loss / len(word_to_idx)))
+
+word, label = trigram[3]
+word = Variable(torch.LongTensor([word_to_idx[i] for i in word]))
+out = ngrammodel(word)
+_, predict_label = torch.max(out, 1)
+predict_word = idx_to_word[predict_label.data[0][0]]
+print('real word is {}, predict word is {}'.format(label, predict_word))
