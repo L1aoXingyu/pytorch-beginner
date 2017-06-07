@@ -33,8 +33,8 @@ class CharLSTM(nn.Module):
 
     def forward(self, x):
         x = self.char_embedding(x)
-        _, x = self.char_lstm(x)
-        return x[1]
+        _, h = self.char_lstm(x)
+        return h[1]
 
 
 class LSTMTagger(nn.Module):
@@ -46,16 +46,15 @@ class LSTMTagger(nn.Module):
         self.lstm = nn.LSTM(n_dim+char_hidden, n_hidden, batch_first=True)
         self.linear1 = nn.Linear(n_hidden, n_tag)
 
-    def forward(self, x, word_data):
-        word = [i for i in word_data]
+    def forward(self, x, word):
         char = torch.FloatTensor()
         for each in word:
-            word_list = []
+            char_list = []
             for letter in each:
-                word_list.append(character_to_idx[letter.lower()])
-            word_list = torch.LongTensor(word_list)
-            word_list = word_list.unsqueeze(0)
-            tempchar = self.char_lstm(Variable(word_list).cuda())
+                char_list.append(character_to_idx[letter.lower()])
+            char_list = torch.LongTensor(char_list)
+            char_list = char_list.unsqueeze(0)
+            tempchar = self.char_lstm(Variable(char_list).cuda())
             tempchar = tempchar.squeeze(0)
             char = torch.cat((char, tempchar.cpu().data), 0)
         char = char.squeeze(1)
@@ -85,8 +84,8 @@ def make_sequence(x, dic):
 
 
 for epoch in range(300):
-    print('epoch {}'.format(epoch+1))
     print('*'*10)
+    print('epoch {}'.format(epoch+1))
     running_loss = 0
     for data in training_data:
         word, tag = data
@@ -104,10 +103,10 @@ for epoch in range(300):
         loss.backward()
         optimizer.step()
     print('Loss: {}'.format(running_loss / len(data)))
-
-input = make_sequence(training_data[0][0], word_to_idx)
+print()
+input = make_sequence("Everybody ate the apple".split(), word_to_idx)
 if torch.cuda.is_available():
     input = input.cuda()
 
-out = model(input, training_data[0][0])
+out = model(input, "Everybody ate the apple".split())
 print(out)

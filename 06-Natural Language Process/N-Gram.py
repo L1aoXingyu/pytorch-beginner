@@ -28,6 +28,7 @@ vocb = set(test_sentence)
 word_to_idx = {word: i for i, word in enumerate(vocb)}
 idx_to_word = {word_to_idx[word]: word for word in word_to_idx}
 
+
 class NgramModel(nn.Module):
     def __init__(self, vocb_size, context_size, n_dim):
         super(NgramModel, self).__init__()
