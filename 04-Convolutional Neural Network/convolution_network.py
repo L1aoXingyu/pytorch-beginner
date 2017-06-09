@@ -7,6 +7,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision import datasets
+from logger import Logger
 
 # 定义超参数
 batch_size = 128
@@ -56,7 +57,7 @@ if use_gpu:
 # 定义loss和optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-
+logger = Logger('./logs')
 # 开始训练
 for epoch in range(num_epoches):
     print('epoch {}'.format(epoch+1))
@@ -74,11 +75,19 @@ for epoch in range(num_epoches):
         running_loss += loss.data[0] * label.size(0)
         _, pred = torch.max(out, 1)
         num_correct = (pred == label).sum()
+        accuracy = (pred == label).float().mean()
         running_acc += num_correct.data[0]
         # 向后传播
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        # log loss and accuracy
+        info = {
+            'loss': loss.data[0],
+            'accuracy': accuracy.data[0]
+        }
+        for tag, value in info.items():
+            logger.scalar_summary(tag, value, epoch*len(train_loader)+i)
 
         if i % 300 == 0:
             print('[{}/{}] Loss: {:.6f}, Acc: {:.6f}'.format(
