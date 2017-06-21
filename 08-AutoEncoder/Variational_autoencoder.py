@@ -10,8 +10,6 @@ from torchvision.utils import save_image
 from torchvision.datasets import MNIST
 import os
 
-os.mkdir('./img')  # create new folder
-
 
 def to_img(x):
     x = 0.5 * (x + 1)
