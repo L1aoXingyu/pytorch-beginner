@@ -8,6 +8,9 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.utils import save_image
 from torchvision.datasets import MNIST
+import os
+
+os.mkdir('./img')  # create new folder
 
 
 def to_img(x):
@@ -34,23 +37,19 @@ class autoencoder(nn.Module):
     def __init__(self):
         super(autoencoder, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 16, 3, stride=2, padding=1),  # b, 16, 10, 10
+            nn.Conv2d(1, 16, 3, stride=3, padding=1),  # b, 16, 10, 10
             nn.ReLU(True),
-            nn.MaxPool2d(2, stride=2)  # b, 16, 5, 5
-            nn.Conv2d(16, 8, 3, stride=3, padding=1),  # b, 8,
+            nn.MaxPool2d(2, stride=2),  # b, 16, 5, 5
+            nn.Conv2d(16, 8, 3, stride=2, padding=1),  # b, 8, 3, 3
             nn.ReLU(True),
-            nn.Linear(64, 12),
-            nn.ReLU(True),
-            nn.Linear(12, 3)
+            nn.MaxPool2d(2, stride=1)  # b, 8, 2, 2
         )
         self.decoder = nn.Sequential(
-            nn.Linear(3, 12),
+            nn.ConvTranspose2d(8, 16, 3, stride=2),  # b, 16, 5, 5
             nn.ReLU(True),
-            nn.Linear(12, 64),
+            nn.ConvTranspose2d(16, 8, 5, stride=3, padding=1),  # b, 8, 15, 15
             nn.ReLU(True),
-            nn.Linear(64, 128),
-            nn.ReLU(True),
-            nn.Linear(128, 28*28),
+            nn.ConvTranspose2d(8, 1, 2, stride=2, padding=1),  # b, 1, 28, 28
             nn.Tanh()
         )
 
@@ -68,8 +67,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,
 for epoch in range(num_epochs):
     for data in dataloader:
         img, _ = data
-        num_img = img.size(0)
-        img = img.view(num_img, -1)
         img = Variable(img).cuda()
         # ===================forward=====================
         output = model(img)
