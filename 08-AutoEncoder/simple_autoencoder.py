@@ -10,6 +10,10 @@ from torchvision.utils import save_image
 from torchvision.datasets import MNIST
 
 
+if not os.path.exists('./mlp_img'):
+    os.mkdir('./mlp_img')
+
+
 def to_img(x):
     x = 0.5 * (x + 1)
     x = x.clamp(0, 1)
@@ -67,8 +71,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,
 for epoch in range(num_epochs):
     for data in dataloader:
         img, _ = data
-        num_img = img.size(0)
-        img = img.view(num_img, -1)
+        img = img.view(img.size(0), -1)
         img = Variable(img).cuda()
         # ===================forward=====================
         output = model(img)
@@ -82,4 +85,6 @@ for epoch in range(num_epochs):
           .format(epoch+1, num_epochs, loss.data[0]))
     if epoch % 10 == 0:
         pic = to_img(output.cpu().data)
-        save_image(pic, './img/image_{}.png'.format(epoch))
+        save_image(pic, './mlp_img/image_{}.png'.format(epoch))
+
+torch.save(model.state_dict(), './sim_autoencoder.pth')

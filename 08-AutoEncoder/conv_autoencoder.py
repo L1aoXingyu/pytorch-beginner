@@ -10,6 +10,9 @@ from torchvision.utils import save_image
 from torchvision.datasets import MNIST
 import os
 
+if not os.path.exists('./dc_img'):
+    os.mkdir('./dc_img')
+
 
 def to_img(x):
     x = 0.5 * (x + 1)
@@ -78,4 +81,6 @@ for epoch in range(num_epochs):
           .format(epoch+1, num_epochs, loss.data[0]))
     if epoch % 10 == 0:
         pic = to_img(output.cpu().data)
-        save_image(pic, './img/image_{}.png'.format(epoch))
+        save_image(pic, './dc_img/image_{}.png'.format(epoch))
+
+torch.save(model.state_dict(), './conv_autoencoder.pth')
