@@ -6,6 +6,10 @@ from torchvision import datasets
 from torchvision import transforms
 from torchvision.utils import save_image
 from torch.autograd import Variable
+import os
+
+if not os.path.exists('./img'):
+    os.mkdir('./img')
 
 
 def to_img(x):
@@ -128,10 +132,10 @@ for epoch in range(num_epoch):
                           real_scores.data.mean(), fake_scores.data.mean()))
     if epoch == 0:
         real_images = to_img(real_img.cpu().data)
-        save_image(real_images, './data/img/real_images.png')
+        save_image(real_images, './img/real_images.png')
 
     fake_images = to_img(fake_img.cpu().data)
-    save_image(fake_images, './data/img/fake_images-{}.png'.format(epoch+1))
+    save_image(fake_images, './img/fake_images-{}.png'.format(epoch+1))
 
 torch.save(G.state_dict(), './generator.pth')
 torch.save(D.state_dict(), './discriminator.pth')
