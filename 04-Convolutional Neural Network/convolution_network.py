@@ -11,8 +11,13 @@ from logger import Logger
 
 # 定义超参数
 batch_size = 128
-learning_rate = 1e-3
+learning_rate = 1e-2
 num_epoches = 20
+
+
+def to_np(x):
+    return x.cpu().data.numpy()
+
 
 # 下载训练集 MNIST 手写数字训练集
 train_dataset = datasets.MNIST(root='./data', train=True,
@@ -32,8 +37,10 @@ class Cnn(nn.Module):
         super(Cnn, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(in_dim, 6, 3, stride=1, padding=1),
+            nn.ReLU(True),
             nn.MaxPool2d(2, 2),
             nn.Conv2d(6, 16, 5, stride=1, padding=0),
+            nn.ReLU(True),
             nn.MaxPool2d(2, 2),
         )
 
@@ -81,14 +88,30 @@ for epoch in range(num_epoches):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        # log loss and accuracy
+        # ========================= Log ======================
+        step = epoch * len(train_loader) + i
+        # (1) Log the scalar values
         info = {
             'loss': loss.data[0],
             'accuracy': accuracy.data[0]
         }
-        for tag, value in info.items():
-            logger.scalar_summary(tag, value, epoch*len(train_loader)+i)
 
+        for tag, value in info.items():
+            logger.scalar_summary(tag, value, step)
+
+        # (2) Log values and gradients of the parameters (histogram)
+        for tag, value in model.named_parameters():
+            tag = tag.replace('.', '/')
+            logger.histo_summary(tag, to_np(value), step)
+            logger.histo_summary(tag+'/grad', to_np(value.grad), step)
+
+        # (3) Log the images
+        info = {
+            'images': to_np(img.view(-1, 28, 28)[:10])
+        }
+
+        for tag, images in info.items():
+            logger.image_summary(tag, images, step)
         if i % 300 == 0:
             print('[{}/{}] Loss: {:.6f}, Acc: {:.6f}'.format(
                 epoch+1, num_epoches,
