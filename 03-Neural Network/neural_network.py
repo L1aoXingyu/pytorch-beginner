@@ -14,14 +14,16 @@ num_epoches = 50
 
 # 下载训练集 MNIST 手写数字训练集
 train_dataset = datasets.MNIST(root='./data', train=True,
-                               transform=transforms.ToTensor(),
+                               transform=transforms.ToTensor(), 
                                download=True)
 
 test_dataset = datasets.MNIST(root='./data', train=False,
                               transform=transforms.ToTensor())
 
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, 
+                          shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, 
+                         shuffle=False)
 
 
 # 定义简单的前馈神经网络
@@ -57,6 +59,9 @@ for epoch in range(num_epoches):
         if torch.cuda.is_available():
             img = Variable(img).cuda()
             label = Variable(label).cuda()
+        else:
+            img = Variable(img)
+            label = Variable(label)
         # 向前传播
         out = model(img)
         loss = criterion(out, label)
