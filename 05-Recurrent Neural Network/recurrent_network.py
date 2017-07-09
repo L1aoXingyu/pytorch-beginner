@@ -70,6 +70,9 @@ for epoch in range(num_epoches):
         if use_gpu:
             img = Variable(img).cuda()
             label = Variable(label).cuda()
+        else:
+            img = Variable(img)
+            label = Variable(label)
         # 向前传播
         out = model(img)
         loss = criterion(out, label)
