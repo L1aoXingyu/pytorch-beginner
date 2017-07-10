@@ -17,7 +17,7 @@ train_dataset = datasets.MNIST(root='./data', train=True,
                                transform=transforms.ToTensor(),
                                download=True)
 
-test_dataset = datasets.MNIST(root='./data', train=False,
+test_dataset = datasets.MNIST(root='./data', train=False, 
                               transform=transforms.ToTensor())
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -57,6 +57,9 @@ for epoch in range(num_epoches):
         if torch.cuda.is_available():
             img = Variable(img).cuda()
             label = Variable(label).cuda()
+        else:
+            img = Variable(img)
+            label = Variable(label)
         # 向前传播
         out = model(img)
         loss = criterion(out, label)
