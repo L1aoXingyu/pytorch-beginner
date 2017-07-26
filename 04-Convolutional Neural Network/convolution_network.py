@@ -20,12 +20,11 @@ def to_np(x):
 
 
 # 下载训练集 MNIST 手写数字训练集
-train_dataset = datasets.MNIST(root='./data', train=True,
-                               transform=transforms.ToTensor(),
-                               download=True)
+train_dataset = datasets.MNIST(
+    root='./data', train=True, transform=transforms.ToTensor(), download=True)
 
-test_dataset = datasets.MNIST(root='./data', train=False,
-                              transform=transforms.ToTensor())
+test_dataset = datasets.MNIST(
+    root='./data', train=False, transform=transforms.ToTensor())
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
@@ -41,14 +40,10 @@ class Cnn(nn.Module):
             nn.MaxPool2d(2, 2),
             nn.Conv2d(6, 16, 5, stride=1, padding=0),
             nn.ReLU(True),
-            nn.MaxPool2d(2, 2),
-        )
+            nn.MaxPool2d(2, 2), )
 
         self.fc = nn.Sequential(
-            nn.Linear(400, 120),
-            nn.Linear(120, 84),
-            nn.Linear(84, n_class)
-        )
+            nn.Linear(400, 120), nn.Linear(120, 84), nn.Linear(84, n_class))
 
     def forward(self, x):
         out = self.conv(x)
@@ -67,18 +62,17 @@ optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 logger = Logger('./logs')
 # 开始训练
 for epoch in range(num_epoches):
-    print('epoch {}'.format(epoch+1))
-    print('*'*10)
+    print('epoch {}'.format(epoch + 1))
+    print('*' * 10)
     running_loss = 0.0
     running_acc = 0.0
     for i, data in enumerate(train_loader, 1):
         img, label = data
         if use_gpu:
-            img = Variable(img).cuda()
-            label = Variable(label).cuda()
-        else:
-            img = Variable(img)
-            label = Variable(label)
+            img = img.cuda()
+            label = label.cuda()
+        img = Variable(img)
+        label = Variable(label)
         # 向前传播
         out = model(img)
         loss = criterion(out, label)
@@ -94,10 +88,7 @@ for epoch in range(num_epoches):
         # ========================= Log ======================
         step = epoch * len(train_loader) + i
         # (1) Log the scalar values
-        info = {
-            'loss': loss.data[0],
-            'accuracy': accuracy.data[0]
-        }
+        info = {'loss': loss.data[0], 'accuracy': accuracy.data[0]}
 
         for tag, value in info.items():
             logger.scalar_summary(tag, value, step)
@@ -106,26 +97,20 @@ for epoch in range(num_epoches):
         for tag, value in model.named_parameters():
             tag = tag.replace('.', '/')
             logger.histo_summary(tag, to_np(value), step)
-            logger.histo_summary(tag+'/grad', to_np(value.grad), step)
+            logger.histo_summary(tag + '/grad', to_np(value.grad), step)
 
         # (3) Log the images
-        info = {
-            'images': to_np(img.view(-1, 28, 28)[:10])
-        }
+        info = {'images': to_np(img.view(-1, 28, 28)[:10])}
 
         for tag, images in info.items():
             logger.image_summary(tag, images, step)
         if i % 300 == 0:
             print('[{}/{}] Loss: {:.6f}, Acc: {:.6f}'.format(
-                epoch+1, num_epoches,
-                running_loss/(batch_size*i),
-                running_acc/(batch_size*i)
-            ))
+                epoch + 1, num_epoches, running_loss / (batch_size * i),
+                running_acc / (batch_size * i)))
     print('Finish {} epoch, Loss: {:.6f}, Acc: {:.6f}'.format(
-        epoch+1,
-        running_loss/(len(train_dataset)),
-        running_acc/(len(train_dataset))
-    ))
+        epoch + 1, running_loss / (len(train_dataset)), running_acc / (len(
+            train_dataset))))
     model.eval()
     eval_loss = 0
     eval_acc = 0
@@ -135,18 +120,16 @@ for epoch in range(num_epoches):
             img = Variable(img, volatile=True).cuda()
             label = Variable(label, volatile=True).cuda()
         else:
-            img = Variabel(img, volatile=True)
+            img = Variable(img, volatile=True)
             label = Variable(label, volatile=True)
         out = model(img)
         loss = criterion(out, label)
-        eval_loss += loss.data[0]*label.size(0)
+        eval_loss += loss.data[0] * label.size(0)
         _, pred = torch.max(out, 1)
         num_correct = (pred == label).sum()
         eval_acc += num_correct.data[0]
-    print('Test Loss: {:.6f}, Acc: {:.6f}'.format(
-        eval_loss/(len(test_dataset)),
-        eval_acc/(len(test_dataset))
-    ))
+    print('Test Loss: {:.6f}, Acc: {:.6f}'.format(eval_loss / (len(
+        test_dataset)), eval_acc / (len(test_dataset))))
     print()
 
 # 保存模型
