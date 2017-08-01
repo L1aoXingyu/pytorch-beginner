@@ -21,8 +21,8 @@ Proving his beauty by succession thine!
 This were to be new made when thou art old,
 And see thy blood warm when thou feel'st it cold.""".split()
 
-trigram = [((test_sentence[i], test_sentence[i+1]), test_sentence[i+2])
-           for i in range(len(test_sentence)-2)]
+trigram = [((test_sentence[i], test_sentence[i + 1]), test_sentence[i + 2])
+           for i in range(len(test_sentence) - 2)]
 
 vocb = set(test_sentence)
 word_to_idx = {word: i for i, word in enumerate(vocb)}
@@ -34,7 +34,7 @@ class NgramModel(nn.Module):
         super(NgramModel, self).__init__()
         self.n_word = vocb_size
         self.embedding = nn.Embedding(self.n_word, n_dim)
-        self.linear1 = nn.Linear(context_size*n_dim, 128)
+        self.linear1 = nn.Linear(context_size * n_dim, 128)
         self.linear2 = nn.Linear(128, self.n_word)
 
     def forward(self, x):
@@ -52,8 +52,8 @@ criterion = nn.NLLLoss()
 optimizer = optim.SGD(ngrammodel.parameters(), lr=1e-3)
 
 for epoch in range(100):
-    print('epoch: {}'.format(epoch+1))
-    print('*'*10)
+    print('epoch: {}'.format(epoch + 1))
+    print('*' * 10)
     running_loss = 0
     for data in trigram:
         word, label = data
