@@ -1,6 +1,6 @@
 import torch
-from torch import nn, optim
 import torch.nn.functional as F
+from torch import nn, optim
 from torch.autograd import Variable
 
 CONTEXT_SIZE = 2
