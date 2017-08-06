@@ -34,7 +34,7 @@ class CharLSTM(nn.Module):
     def forward(self, x):
         x = self.char_embedding(x)
         _, h = self.char_lstm(x)
-        return h[1]
+        return h[0]
 
 
 class LSTMTagger(nn.Module):
