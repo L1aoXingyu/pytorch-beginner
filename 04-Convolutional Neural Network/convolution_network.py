@@ -39,8 +39,7 @@ class Cnn(nn.Module):
             nn.ReLU(True),
             nn.MaxPool2d(2, 2),
             nn.Conv2d(6, 16, 5, stride=1, padding=0),
-            nn.ReLU(True),
-            nn.MaxPool2d(2, 2), )
+            nn.ReLU(True), nn.MaxPool2d(2, 2))
 
         self.fc = nn.Sequential(
             nn.Linear(400, 120), nn.Linear(120, 84), nn.Linear(84, n_class))
