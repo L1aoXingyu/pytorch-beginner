@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision import datasets
-
+import time
 # 定义超参数
 batch_size = 32
 learning_rate = 1e-3
@@ -45,8 +45,9 @@ optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 
 # 开始训练
 for epoch in range(num_epoches):
-    print('epoch {}'.format(epoch + 1))
     print('*' * 10)
+    print('epoch {}'.format(epoch + 1))
+    since = time.time()
     running_loss = 0.0
     running_acc = 0.0
     for i, data in enumerate(train_loader, 1):
@@ -97,6 +98,7 @@ for epoch in range(num_epoches):
         eval_acc += num_correct.data[0]
     print('Test Loss: {:.6f}, Acc: {:.6f}'.format(eval_loss / (len(
         test_dataset)), eval_acc / (len(test_dataset))))
+    print('Time:{:.1f} s'.format(time.time() - since))
     print()
 
 # 保存模型
