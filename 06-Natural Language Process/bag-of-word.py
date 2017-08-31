@@ -50,7 +50,7 @@ model = CBOW(len(word_to_idx), 100, CONTEXT_SIZE)
 if torch.cuda.is_available():
     model = model.cuda()
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.NLLLoss()
 optimizer = optim.SGD(model.parameters(), lr=1e-3)
 
 for epoch in range(100):
