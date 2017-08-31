@@ -19,8 +19,10 @@ vocab = set(raw_text)
 word_to_idx = {word: i for i, word in enumerate(vocab)}
 
 data = []
-for i in range(CONTEXT_SIZE, len(raw_text)-CONTEXT_SIZE):
-    context = [raw_text[i-2], raw_text[i-1], raw_text[i+1], raw_text[i+2]]
+for i in range(CONTEXT_SIZE, len(raw_text) - CONTEXT_SIZE):
+    context = [
+        raw_text[i - 2], raw_text[i - 1], raw_text[i + 1], raw_text[i + 2]
+    ]
     target = raw_text[i]
     data.append((context, target))
 
@@ -29,12 +31,14 @@ class CBOW(nn.Module):
     def __init__(self, n_word, n_dim, context_size):
         super(CBOW, self).__init__()
         self.embedding = nn.Embedding(n_word, n_dim)
-        self.linear1 = nn.Linear(2*context_size*n_dim, 128)
+        self.project = nn.Linear(n_dim, n_dim, bias=False)
+        self.linear1 = nn.Linear(n_dim, 128)
         self.linear2 = nn.Linear(128, n_word)
 
     def forward(self, x):
         x = self.embedding(x)
-        x = x.view(1, -1)
+        x = self.project(x)
+        x = torch.sum(x, 0, keepdim=True)
         x = self.linear1(x)
         x = F.relu(x, inplace=True)
         x = self.linear2(x)
@@ -51,7 +55,7 @@ optimizer = optim.SGD(model.parameters(), lr=1e-3)
 
 for epoch in range(100):
     print('epoch {}'.format(epoch))
-    print('*'*10)
+    print('*' * 10)
     running_loss = 0
     for word in data:
         context, target = word
