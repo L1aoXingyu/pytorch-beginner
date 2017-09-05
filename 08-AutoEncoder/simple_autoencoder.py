@@ -1,14 +1,15 @@
 __author__ = 'SherlockLiao'
 
+import os
+
 import torch
 import torchvision
 from torch import nn
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from torchvision.utils import save_image
 from torchvision.datasets import MNIST
-
+from torchvision.utils import save_image
 
 if not os.path.exists('./mlp_img'):
     os.mkdir('./mlp_img')
@@ -38,24 +39,17 @@ class autoencoder(nn.Module):
     def __init__(self):
         super(autoencoder, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Linear(28*28, 128),
+            nn.Linear(28 * 28, 128),
             nn.ReLU(True),
             nn.Linear(128, 64),
-            nn.ReLU(True),
-            nn.Linear(64, 12),
-            nn.ReLU(True),
-            nn.Linear(12, 3)
-        )
+            nn.ReLU(True), nn.Linear(64, 12), nn.ReLU(True), nn.Linear(12, 3))
         self.decoder = nn.Sequential(
             nn.Linear(3, 12),
             nn.ReLU(True),
             nn.Linear(12, 64),
             nn.ReLU(True),
             nn.Linear(64, 128),
-            nn.ReLU(True),
-            nn.Linear(128, 28*28),
-            nn.Tanh()
-        )
+            nn.ReLU(True), nn.Linear(128, 28 * 28), nn.Tanh())
 
     def forward(self, x):
         x = self.encoder(x)
@@ -65,8 +59,8 @@ class autoencoder(nn.Module):
 
 model = autoencoder().cuda()
 criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,
-                             weight_decay=1e-5)
+optimizer = torch.optim.Adam(
+    model.parameters(), lr=learning_rate, weight_decay=1e-5)
 
 for epoch in range(num_epochs):
     for data in dataloader:
@@ -82,7 +76,7 @@ for epoch in range(num_epochs):
         optimizer.step()
     # ===================log========================
     print('epoch [{}/{}], loss:{:.4f}'
-          .format(epoch+1, num_epochs, loss.data[0]))
+          .format(epoch + 1, num_epochs, loss.data[0]))
     if epoch % 10 == 0:
         pic = to_img(output.cpu().data)
         save_image(pic, './mlp_img/image_{}.png'.format(epoch))
