@@ -12,7 +12,6 @@ from torchvision.utils import save_image
 from torchvision.datasets import MNIST
 import os
 
-
 if not os.path.exists('./vae_img'):
     os.mkdir('./vae_img')
 
@@ -32,7 +31,7 @@ img_transform = transforms.Compose([
     # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-dataset = MNIST('./data', transform=img_transform)
+dataset = MNIST('./data', transform=img_transform, download=True)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 
@@ -73,7 +72,7 @@ model = VAE()
 if torch.cuda.is_available():
     model.cuda()
 
-reconstruction_function = nn.BCELoss(size_average=False)
+reconstruction_function = nn.MSELoss(size_average=False)
 
 
 def loss_function(recon_x, x, mu, logvar):
@@ -93,7 +92,6 @@ def loss_function(recon_x, x, mu, logvar):
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-
 for epoch in range(num_epochs):
     model.train()
     train_loss = 0
@@ -111,12 +109,13 @@ for epoch in range(num_epochs):
         optimizer.step()
         if batch_idx % 100 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(img), len(dataloader.dataset),
-                100. * batch_idx / len(dataloader),
+                epoch,
+                batch_idx * len(img),
+                len(dataloader.dataset), 100. * batch_idx / len(dataloader),
                 loss.data[0] / len(img)))
 
     print('====> Epoch: {} Average loss: {:.4f}'.format(
-          epoch, train_loss / len(dataloader.dataset)))
+        epoch, train_loss / len(dataloader.dataset)))
     if epoch % 10 == 0:
         save = to_img(recon_batch.cpu().data)
         save_image(save, './vae_img/image_{}.png'.format(epoch))
