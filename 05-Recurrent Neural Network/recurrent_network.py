@@ -91,8 +91,8 @@ for epoch in range(num_epoches):
         epoch + 1, running_loss / (len(train_dataset)), running_acc / (len(
             train_dataset))))
     model.eval()
-    eval_loss = 0
-    eval_acc = 0
+    eval_loss = 0.
+    eval_acc = 0.
     for data in test_loader:
         img, label = data
         b, c, h, w = img.size()
