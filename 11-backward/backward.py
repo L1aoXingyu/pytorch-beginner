@@ -50,10 +50,10 @@ y = v(t.FloatTensor([[1, 2], [3, 4]]))
 
 z = t.mm(x, y)
 jacobian = t.zeros((2, 2))
-z.backward(t.FloatTensor([[1, 0]]), retain_variables=True)  # dz1/dx1, dz2/dx1
+z.backward(t.FloatTensor([[1, 0]]), retain_variables=True)  # dz1/dx1, dz1/dx2
 jacobian[:, 0] = x.grad.data
 x.grad.data.zero_()
-z.backward(t.FloatTensor([[0, 1]]))  # dz1/dx2, dz2/dx2
+z.backward(t.FloatTensor([[0, 1]]))  # dz2/dx1, dz2/dx2
 jacobian[:, 1] = x.grad.data
 print('=========jacobian========')
 print('x')
