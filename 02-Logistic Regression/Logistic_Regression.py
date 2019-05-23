@@ -25,9 +25,9 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 
 # 定义 Logistic Regression 模型
-class Logstic_Regression(nn.Module):
+class Logistic_Regression(nn.Module):
     def __init__(self, in_dim, n_class):
-        super(Logstic_Regression, self).__init__()
+        super(Logistic_Regression, self).__init__()
         self.logstic = nn.Linear(in_dim, n_class)
 
     def forward(self, x):
@@ -35,7 +35,7 @@ class Logstic_Regression(nn.Module):
         return out
 
 
-model = Logstic_Regression(28 * 28, 10)  # 图片大小是28x28
+model = Logistic_Regression(28 * 28, 10)  # 图片大小是28x28
 use_gpu = torch.cuda.is_available()  # 判断是否有GPU加速
 if use_gpu:
     model = model.cuda()
