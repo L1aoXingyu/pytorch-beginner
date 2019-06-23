@@ -1,9 +1,11 @@
-__author__ = 'SherlockLiao'
+"""
+@author:  liaoxingyu
+@contact: sherlockliao01@gmail.com
+"""
 
 import torch
 from torch import nn, optim
 
-from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision import datasets
