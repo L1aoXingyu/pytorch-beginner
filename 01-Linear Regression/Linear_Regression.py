@@ -1,10 +1,14 @@
-__author__ = 'SherlockLiao'
+# encoding: utf-8
+"""
+@author:  liaoxingyu
+@contact: sherlockliao01@gmail.com
+"""
 
-import torch
-from torch import nn, optim
-from torch.autograd import Variable
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from torch import nn
+from torch.autograd import Variable
 
 x_train = np.array([[3.3], [4.4], [5.5], [6.71], [6.93], [4.168],
                     [9.779], [6.182], [7.59], [2.167], [7.042],
@@ -21,9 +25,9 @@ y_train = torch.from_numpy(y_train)
 
 
 # Linear Regression Model
-class LinearRegression(nn.Module):
+class linearRegression(nn.Module):
     def __init__(self):
-        super(LinearRegression, self).__init__()
+        super(linearRegression, self).__init__()
         self.linear = nn.Linear(1, 1)  # input and output is 1 dimension
 
     def forward(self, x):
@@ -31,16 +35,16 @@ class LinearRegression(nn.Module):
         return out
 
 
-model = LinearRegression()
+model = linearRegression()
 # 定义loss和优化函数
 criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=1e-4)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-4)
 
 # 开始训练
 num_epochs = 1000
 for epoch in range(num_epochs):
-    inputs = Variable(x_train)
-    target = Variable(y_train)
+    inputs = x_train
+    target = y_train
 
     # forward
     out = model(inputs)
@@ -51,12 +55,14 @@ for epoch in range(num_epochs):
     optimizer.step()
 
     if (epoch+1) % 20 == 0:
-        print('Epoch[{}/{}], loss: {:.6f}'
-              .format(epoch+1, num_epochs, loss.data[0]))
+        print(f'Epoch[{epoch+1}/{num_epochs}], loss: {loss.item():.6f}')
 
 model.eval()
-predict = model(Variable(x_train))
+with torch.no_grad():
+    predict = model(x_train)
 predict = predict.data.numpy()
+
+fig = plt.figure(figsize=(10, 5))
 plt.plot(x_train.numpy(), y_train.numpy(), 'ro', label='Original data')
 plt.plot(x_train.numpy(), predict, label='Fitting Line')
 # 显示图例

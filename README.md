@@ -1,4 +1,6 @@
 # pytorch-beginner
-toy code for pytorch beginner
+Toy project for pytorch beginner with simplest code. 
 
-**Welcome to visit this [site](https://github.com/SherlockLiao/code-of-learn-deep-learning-with-pytorch) to get more detailed chinese pytorch tutorial.**
+## Requirements
+python 3.7
+pytorch 1.0.0+
