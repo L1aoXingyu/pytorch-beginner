@@ -27,7 +27,7 @@ learning_rate = 1e-3
 
 img_transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    transforms.Normalize((0.5), (0.5))
 ])
 
 dataset = MNIST('./data', transform=img_transform)
@@ -64,7 +64,7 @@ model = autoencoder().cuda()
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,
                              weight_decay=1e-5)
-
+total_loss = 0
 for epoch in range(num_epochs):
     for data in dataloader:
         img, _ = data
@@ -77,8 +77,9 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
     # ===================log========================
+    total_loss += loss.data
     print('epoch [{}/{}], loss:{:.4f}'
-          .format(epoch+1, num_epochs, loss.data[0]))
+          .format(epoch+1, num_epochs, total_loss))
     if epoch % 10 == 0:
         pic = to_img(output.cpu().data)
         save_image(pic, './dc_img/image_{}.png'.format(epoch))
