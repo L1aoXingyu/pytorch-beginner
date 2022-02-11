@@ -64,8 +64,9 @@ model = autoencoder().cuda()
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate,
                              weight_decay=1e-5)
-total_loss = 0
+
 for epoch in range(num_epochs):
+    total_loss = 0
     for data in dataloader:
         img, _ = data
         img = Variable(img).cuda()
@@ -76,8 +77,8 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        total_loss += loss.data
     # ===================log========================
-    total_loss += loss.data
     print('epoch [{}/{}], loss:{:.4f}'
           .format(epoch+1, num_epochs, total_loss))
     if epoch % 10 == 0:
