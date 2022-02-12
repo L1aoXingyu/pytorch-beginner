@@ -1,5 +1,5 @@
 # pytorch-beginner
-Toy project for pytorch beginner with simplest code. 
+Toy project for pytorch beginner with the simplest code. 
 
 ## Requirements
 python 3.7
